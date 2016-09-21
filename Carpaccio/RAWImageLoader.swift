@@ -56,6 +56,26 @@ public class RAWImageLoader: ImageLoaderProtocol
     }
     
     public lazy var imageMetadata: ImageMetadata? = {
+        
+        func getString(_ from: NSDictionary, _ key: CFString) -> String? {
+            return from[key as String] as? String
+        }
+        
+        func getDouble(_ from: NSDictionary, _ key: CFString) -> Double? {
+            return (from[key as String] as? NSNumber)?.doubleValue
+        }
+        
+        func getEnum<T>(_ from: NSDictionary, _ key: CFString, _ matches: [String: T]) -> T? {
+            guard let val = from[key as String] as? String else {
+                return nil
+            }
+            
+            guard let enumValue = matches[val] != nil else {
+               return nil
+            }
+            
+            return enumValue;
+        }
 
         guard let imageSource = self.imageSource else {
             return nil
@@ -67,22 +87,29 @@ public class RAWImageLoader: ImageLoaderProtocol
         
         let properties = NSDictionary(dictionary: imageProperties)
         
-        var fNumber: Double? = nil, focalLength: Double? = nil, focalLength35mm: Double? = nil, ISO: Double? = nil, shutterSpeed: Double? = nil
-        var colorSpace: CGColorSpace? = nil
-        var width: CGFloat? = nil, height: CGFloat? = nil
-        var timestamp: Date? = nil
         
         // Examine EXIF metadata
+        var exifMetadata: ExifMetadata
         if let EXIF = properties[kCGImagePropertyExifDictionary as String] as? NSDictionary
         {
-            fNumber = (EXIF[kCGImagePropertyExifFNumber as String] as? NSNumber)?.doubleValue
+            var fNumber: Double? = nil, focalLength: Double? = nil, focalLength35mm: Double? = nil, ISO: Double? = nil, shutterSpeed: Double? = nil
+            var colorSpace: CGColorSpace? = nil
+            var width: CGFloat? = nil, height: CGFloat? = nil
+            var timestamp: Date? = nil
+            var imageId: String? = nil
+            var bodySerialNumber: String? = nil, lensSpecs: String? = nil, lensMake: String? = nil, lensModel: String? = nil,lensSerialNumber: String? = nil
+            var originalTimestamp: Date? = nil, digitizedTimestamp: Date? = nil
             
-            if let colorSpaceName = EXIF[kCGImagePropertyExifColorSpace] as? NSString {
-                colorSpace = CGColorSpace(name: colorSpaceName)
+            imageId = getString(EXIF, kCGImagePropertyExifImageUniqueID)
+            
+            fNumber = getDouble(EXIF, kCGImagePropertyExifFNumber)
+            
+            if let colorSpaceName = getString(EXIF, kCGImagePropertyExifColorSpace) {
+                colorSpace = CGColorSpace(name: colorSpaceName as CFString)
             }
             
-            focalLength = (EXIF[kCGImagePropertyExifFocalLength as String] as? NSNumber)?.doubleValue
-            focalLength35mm = (EXIF[kCGImagePropertyExifFocalLenIn35mmFilm as String] as? NSNumber)?.doubleValue
+            focalLength = getDouble(EXIF, kCGImagePropertyExifFocalLength)
+            focalLength35mm = getDouble(EXIF, kCGImagePropertyExifFocalLenIn35mmFilm)
             
             if let ISOs = EXIF[kCGImagePropertyExifISOSpeedRatings as String]
             {
@@ -92,47 +119,84 @@ public class RAWImageLoader: ImageLoaderProtocol
                 }
             }
             
-            shutterSpeed = (EXIF[kCGImagePropertyExifExposureTime as String] as? NSNumber)?.doubleValue
+            shutterSpeed = getDouble(EXIF, kCGImagePropertyExifExposureTime)
             
-            if let w = (EXIF[kCGImagePropertyExifPixelXDimension as String] as? NSNumber)?.doubleValue {
+            if let w = getDouble(EXIF, kCGImagePropertyExifPixelXDimension) {
                 width = CGFloat(w)
             }
-            if let h = (EXIF[kCGImagePropertyExifPixelYDimension as String] as? NSNumber)?.doubleValue {
+            if let h = getDouble(EXIF, kCGImagePropertyExifPixelYDimension) {
                 height = CGFloat(h)
             }
             
-            if let originalDateString = (EXIF[kCGImagePropertyExifDateTimeOriginal as String] as? String) {
+            if let originalDateString = getString(EXIF, kCGImagePropertyExifDateTimeOriginal) {
                 timestamp = EXIFDateFormatter.date(from: originalDateString)
             }
+            
+            bodySerialNumber = getString(EXIF, kCGImagePropertyExifBodySerialNumber)
+            lensSpecs = getString(EXIF, kCGImagePropertyExifLensSpecification)
+            lensMake = getString(EXIF, kCGImagePropertyExifLensMake)
+            lensModel = getString(EXIF, kCGImagePropertyExifLensModel)
+            lensSerialNumber = getString(EXIF, kCGImagePropertyExifLensSerialNumber)
+            
+            if originalTimestamp == nil, let dateTimeString = getString(EXIF, kCGImagePropertyExifDateTimeOriginal) {
+                originalTimestamp = EXIFDateFormatter.date(from: dateTimeString)
+            }
+            
+            if digitizedTimestamp == nil, let dateTimeString = getString(EXIF, kCGImagePropertyExifDateTimeDigitized) {
+                digitizedTimestamp = EXIFDateFormatter.date(from: dateTimeString)
+            }
+            
+            /*
+             If image dimension didn't appear in metadata (can happen with some RAW files like Nikon NEFs), take one more step:
+             open the actual image. This thankfully doesn't appear to immediately load image data.
+             */
+            if width == nil || height == nil
+            {
+                let options: CFDictionary = [String(kCGImageSourceShouldCache): false] as NSDictionary as CFDictionary
+                let image = CGImageSourceCreateImageAtIndex(imageSource, 0, options)
+                width = CGFloat((image?.width)!)
+                height = CGFloat((image?.height)!)
+            }
+            
+            exifMetadata = ExifMetadata(imageId: imageId, bodySerialNumber: bodySerialNumber, lensSpecification: lensSpecs, lensMake: lensMake, lensModel: lensModel, lensSerialNumber: lensSerialNumber, nativeSize: CGSize(width: width!, height: height!), colorSpace: colorSpace, fNumber: fNumber, focalLength: focalLength, focalLength35mmEquivalent: focalLength35mm, iso: ISO, shutterSpeed: shutterSpeed, originalTimestamp: originalTimestamp, digitizedTimestamp: digitizedTimestamp)
         }
         
         // Examine TIFF metadata
-        var cameraMaker: String? = nil, cameraModel: String? = nil, orientation: CGImagePropertyOrientation? = nil
-        
+        var tiffMetadata: TIFFMetadata
         if let TIFF = properties[kCGImagePropertyTIFFDictionary as String] as? NSDictionary
         {
-            cameraMaker = TIFF[kCGImagePropertyTIFFMake as String] as? String
-            cameraModel = TIFF[kCGImagePropertyTIFFModel as String] as? String
+            var cameraMaker: String? = nil, cameraModel: String? = nil, orientation: CGImagePropertyOrientation? = nil, timestamp: Date? = nil
+            
+            cameraMaker = getString(TIFF, kCGImagePropertyTIFFMake)
+            cameraModel = getString(TIFF, kCGImagePropertyTIFFModel)
+            
             orientation = CGImagePropertyOrientation(rawValue: (TIFF[kCGImagePropertyTIFFOrientation as String] as? NSNumber)?.uint32Value ?? CGImagePropertyOrientation.up.rawValue)
             
-            if timestamp == nil, let dateTimeString = (TIFF[kCGImagePropertyTIFFDateTime as String] as? String) {
+            if timestamp == nil, let dateTimeString = getString(TIFF, kCGImagePropertyTIFFDateTime) {
                 timestamp = EXIFDateFormatter.date(from: dateTimeString)
             }
+            
+            tiffMetadata = TIFFMetadata(cameraMaker: cameraMaker, cameraModel: cameraModel, nativeOrientation: (orientation)!, timestamp: timestamp)
         }
         
-        /*
-         If image dimension didn't appear in metadata (can happen with some RAW files like Nikon NEFs), take one more step:
-         open the actual image. This thankfully doesn't appear to immediately load image data.
-         */
-        if width == nil || height == nil
+        // Examine GPS metadata
+        var gpsMetadata: GpsMetadata
+        if let GPS = properties[kCGImagePropertyGPSDictionary as String] as? NSDictionary
         {
-            let options: CFDictionary = [String(kCGImageSourceShouldCache): false] as NSDictionary as CFDictionary
-            let image = CGImageSourceCreateImageAtIndex(imageSource, 0, options)
-            width = CGFloat((image?.width)!)
-            height = CGFloat((image?.height)!)
+            var gpsVersion: String? = getString(GPS, kCGImagePropertyGPSVersion)
+            var latitudeRef: LatitudeRef? = getEnum(GPS,  kCGImagePropertyGPSLatitudeRef, ["N": LatitudeRef.north, "S": LatitudeRef.south])
+            var latitude: String? = nil
+            var longtitudeRef: LongtitudeRef? = nil
+            var longtitude: String? = nil
+            var altitudeRef: String? = nil
+            var altitude: String? = nil
+            var gpsTimestamp: Date? = nil
+            var imgDirection: String? = nil
+            
+            
         }
         
-        let metadata = ImageMetadata(nativeSize: CGSize(width: width!, height: height!), nativeOrientation: orientation ?? .up, colorSpace: colorSpace, fNumber: fNumber, focalLength: focalLength, focalLength35mmEquivalent: focalLength35mm, ISO: ISO, shutterSpeed: shutterSpeed, cameraMaker: cameraMaker, cameraModel: cameraModel, timestamp: timestamp)
+        let metadata = ImageMetadata(exif: exifMetadata, tiff: tiffMetadata)
         return metadata
     }()
     

@@ -34,14 +34,14 @@ class CarpaccioTests: XCTestCase {
             XCTAssertEqual(thumb.size.width, 1616)
             XCTAssertEqual(thumb.size.height, 1080)
             
-            XCTAssertEqual(imageMetadata.cameraMaker, "SONY")
-            XCTAssertEqual(imageMetadata.cameraModel, "ILCE-7RM2")
-            XCTAssertEqual(imageMetadata.ISO, 125.0)
-            XCTAssertEqual(imageMetadata.nativeSize.width, 7952.0)
-            XCTAssertEqual(imageMetadata.nativeSize.height, 5304.0)
+            XCTAssertEqual(imageMetadata.tiff.cameraMaker, "SONY")
+            XCTAssertEqual(imageMetadata.tiff.cameraModel, "ILCE-7RM2")
+            XCTAssertEqual(imageMetadata.exif.iso, 125.0)
+            XCTAssertEqual(imageMetadata.exif.nativeSize.width, 7952.0)
+            XCTAssertEqual(imageMetadata.exif.nativeSize.height, 5304.0)
             
             let testedComponents:Set<Calendar.Component> = [.year, .month, .day, .hour, .minute, .second]
-            let date = imageMetadata.timestamp!
+            let date = imageMetadata.tiff.timestamp!
             let components = Calendar(identifier: .gregorian).dateComponents(testedComponents, from: date)
             
             XCTAssertEqual(components.year, 2016)
@@ -71,18 +71,18 @@ class CarpaccioTests: XCTestCase {
 			XCTAssertEqual(image.size.width, 2448.0)
 			XCTAssertEqual(image.size.height, 3264.0)
 			
-			XCTAssertEqual(imageMetadata.cameraMaker, "Apple")
-			XCTAssertEqual(imageMetadata.cameraModel, "iPhone 5")
-			XCTAssertEqual(imageMetadata.ISO, 50.0)
-			XCTAssertEqual(imageMetadata.nativeSize.width, 3264.0)
-			XCTAssertEqual(imageMetadata.nativeSize.height, 2448.0)
-			XCTAssertEqualWithAccuracy(imageMetadata.fNumber!, 2.4, accuracy: 0.01)
-			XCTAssertEqualWithAccuracy(imageMetadata.focalLength!, 4.12, accuracy: 0.01)
-			XCTAssertEqualWithAccuracy(imageMetadata.focalLength35mmEquivalent!, 33.0, accuracy: 0.000000001)
-			XCTAssertEqualWithAccuracy(imageMetadata.shutterSpeed!, 0.00145772, accuracy: 0.00000001)
+			XCTAssertEqual(imageMetadata.tiff.cameraMaker, "Apple")
+			XCTAssertEqual(imageMetadata.tiff.cameraModel, "iPhone 5")
+			XCTAssertEqual(imageMetadata.exif.iso, 50.0)
+			XCTAssertEqual(imageMetadata.exif.nativeSize.width, 3264.0)
+			XCTAssertEqual(imageMetadata.exif.nativeSize.height, 2448.0)
+			XCTAssertEqualWithAccuracy(imageMetadata.exif.fNumber!, 2.4, accuracy: 0.01)
+			XCTAssertEqualWithAccuracy(imageMetadata.exif.focalLength!, 4.12, accuracy: 0.01)
+			XCTAssertEqualWithAccuracy(imageMetadata.exif.focalLength35mmEquivalent!, 33.0, accuracy: 0.000000001)
+			XCTAssertEqualWithAccuracy(imageMetadata.exif.shutterSpeed!, 0.00145772, accuracy: 0.00000001)
 			
 			let testedComponents:Set<Calendar.Component> = [.year, .month, .day, .hour, .minute, .second]
-			let date = imageMetadata.timestamp!
+			let date = imageMetadata.tiff.timestamp!
 			let components = Calendar(identifier: .gregorian).dateComponents(testedComponents, from: date)
 
 			XCTAssertEqual(components.year, 2016)
