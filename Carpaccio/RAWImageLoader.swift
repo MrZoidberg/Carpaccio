@@ -70,7 +70,9 @@ public class RAWImageLoader: ImageLoaderProtocol
                 return nil
             }
             
-            guard let enumValue = matches[val] != nil else {
+            let enumValue: T? = matches[val];
+            
+            guard (enumValue != nil) else {
                return nil
             }
             
@@ -89,7 +91,7 @@ public class RAWImageLoader: ImageLoaderProtocol
         
         
         // Examine EXIF metadata
-        var exifMetadata: ExifMetadata
+        var exifMetadata: ExifMetadata? = nil
         if let EXIF = properties[kCGImagePropertyExifDictionary as String] as? NSDictionary
         {
             var fNumber: Double? = nil, focalLength: Double? = nil, focalLength35mm: Double? = nil, ISO: Double? = nil, shutterSpeed: Double? = nil
@@ -162,7 +164,7 @@ public class RAWImageLoader: ImageLoaderProtocol
         }
         
         // Examine TIFF metadata
-        var tiffMetadata: TIFFMetadata
+        var tiffMetadata: TIFFMetadata? = nil
         if let TIFF = properties[kCGImagePropertyTIFFDictionary as String] as? NSDictionary
         {
             var cameraMaker: String? = nil, cameraModel: String? = nil, orientation: CGImagePropertyOrientation? = nil, timestamp: Date? = nil
@@ -180,7 +182,7 @@ public class RAWImageLoader: ImageLoaderProtocol
         }
         
         // Examine GPS metadata
-        var gpsMetadata: GpsMetadata
+        var gpsMetadata: GpsMetadata? = nil
         if let GPS = properties[kCGImagePropertyGPSDictionary as String] as? NSDictionary
         {
             var gpsVersion: String? = getString(GPS, kCGImagePropertyGPSVersion)
@@ -196,7 +198,7 @@ public class RAWImageLoader: ImageLoaderProtocol
             
         }
         
-        let metadata = ImageMetadata(exif: exifMetadata, tiff: tiffMetadata)
+        let metadata = ImageMetadata(exif: exifMetadata!, tiff: tiffMetadata!)
         return metadata
     }()
     
