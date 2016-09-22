@@ -11,6 +11,32 @@ import Foundation
 import QuartzCore
 import ImageIO
 
+public enum FlashMode: Int
+{
+	case FlashDidNotFire = 0x0000
+	case FlashFired = 0x0001
+	case StrobeReturnLightNotDetected = 0x0005
+	case StrobeReturnLightDetected = 0x0007
+	case FlashFiredCompulsoryFlashMode = 0x0009
+	case FlashFiredCompulsoryFlashModeReturnLightNotDetected = 0x000D
+	case FlashFiredCompulsoryFlashModeReturnLightDetected = 0x000F
+	case FlashDidNotFireCompulsoryFlashMode = 0x0010
+	case FlashDidNotFireAutoMode = 0x0018
+	case FlashFiredAutoMode = 0x0019
+	case FlashFiredAutoModeReturnLightNotDetected = 0x001D
+	case FlashFiredAutoModeReturnLightDetected = 0x001F
+	case NoFlashFunction = 0x0020
+	case FlashFiredRedEyeReductionMode = 0x0041
+	case FlashFiredRedEyeReductionModeReturnLightNotDetected = 0x0045
+	case FlashFiredRedEyeReductionModeReturnLightDetected = 0x0047
+	case FlashFiredCompulsoryFlashModeRedEyeReductionMode = 0x0049
+	case FlashFiredCompulsoryFlashModeRedEyeReductionModeReturnLightNotDetected = 0x004D
+	case FlashFiredCompulsoryFlashModeRedEyeReductionModeReturnLightDetected = 0x004F
+	case FlashFiredAutoModeRedEyeReductionMode = 0x0059
+	case FlashFiredAutoModeRedEyeReductionModeReturnLightNotDetected = 0x005D
+	case FlashFiredAutoModeRedEyeReductionModeReturnLightDetected = 0x005F
+}
+
 public struct ExifMetadata
 {
     public let imageId: String?
@@ -30,26 +56,11 @@ public struct ExifMetadata
     
     public let originalTimestamp: Date?
     public let digitizedTimestamp: Date?
-    
-    public init(imageId: String? = nil, bodySerialNumber: String? = nil, lensSpecification: String? = nil, lensMake: String? = nil, lensModel: String? = nil, lensSerialNumber: String? = nil, nativeSize: CGSize, colorSpace: CGColorSpace? = nil, fNumber: Double? = nil, focalLength: Double? = nil, focalLength35mmEquivalent: Double? = nil, iso: Double? = nil, shutterSpeed: TimeInterval? = nil, originalTimestamp: Date? = nil, digitizedTimestamp: Date? = nil)
-    {
-        self.imageId = imageId
-        self.fNumber = fNumber
-        self.bodySerialNumber = bodySerialNumber
-        self.lensSpecification = lensSpecification
-        self.lensMake = lensMake
-        self.lensModel = lensModel
-        self.lensSerialNumber = lensSerialNumber
-        self.colorSpace = colorSpace
-        self.focalLength = focalLength
-        self.focalLength35mmEquivalent = focalLength35mmEquivalent
-        self.iso = iso
-        self.nativeSize = nativeSize
-        self.shutterSpeed = shutterSpeed
-        self.originalTimestamp = originalTimestamp
-        self.digitizedTimestamp = digitizedTimestamp
-    }
-    
+	
+	public let subjectDistance: Double?
+	public let subjectArea: [Double]?
+	public let flashMode: FlashMode?
+
     public var humanReadableFNumber: String? {
         get
         {
@@ -135,15 +146,7 @@ public struct TIFFMetadata
     public let cameraModel: String?
     public let nativeOrientation: CGImagePropertyOrientation
     public let timestamp: Date?
-    
-    public init(cameraMaker: String? = nil, cameraModel: String? = nil, nativeOrientation: CGImagePropertyOrientation = .up, timestamp: Date? = nil)
-    {
-        self.cameraMaker = cameraMaker
-        self.cameraModel = cameraModel
-        self.nativeOrientation = nativeOrientation
-        self.timestamp = timestamp
-    }
-    
+
     public var cleanedUpCameraModel: String? {
         get {
             guard let model = self.cameraModel else {
@@ -187,11 +190,11 @@ public struct GpsMetadata
 {
     public let gpsVersion: String?
     public let latitudeRef: LatitudeRef?
-    public let latitude: String?
+    public let latitude: Double?
     public let longtitudeRef: LongtitudeRef?
-    public let longtitude: String?
-    public let altitudeRef: String?
-    public let altitude: String?
+    public let longtitude: Double?
+    public let altitudeRef: AltitudeRef?
+    public let altitude: Double?
     public let timestamp: Date?
     public let imgDirection: String?
 }
