@@ -15,12 +15,10 @@ Pod::Spec.new do |s|
 Carpaccio is a Swift library that allows decoding image data from file formats supported by CoreImage (including all the various RAW file formats supported by CoreImage). It is built for efficient use of multiple CPU cores.
                        DESC
 
-  s.homepage         = 'https://github.com/mz2/Carpaccio'
+  s.homepage         = 'https://github.com/MrZoidberg/Carpaccio'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Matias Piipari' => 'matias.piipari@gmail.com' }
-  s.source           = { :git => 'https://github.com/mz2/Carpaccio.git', :tag => '0.0.5' }
-
-  s.social_media_url = 'https://twitter.com/mz2'
+  s.source           = { :git => 'https://github.com/MrZoidberg/Carpaccio.git', :tag => '0.0.3' }
   
   s.module_name      = 'Carpaccio'
   
