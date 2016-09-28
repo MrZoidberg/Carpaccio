@@ -83,7 +83,6 @@
 		5F1E229D1CDEAC330083FD6F /* DSC00583.ARW */ = {isa = PBXFileReference; lastKnownFileType = file; path = DSC00583.ARW; sourceTree = "<group>"; };
 		5F1E229E1CDEAC330083FD6F /* DSC00588.ARW */ = {isa = PBXFileReference; lastKnownFileType = file; path = DSC00588.ARW; sourceTree = "<group>"; };
 		5F1E229F1CDEAC330083FD6F /* DSC00593.ARW */ = {isa = PBXFileReference; lastKnownFileType = file; path = DSC00593.ARW; sourceTree = "<group>"; };
-		5F7016221CE3295900173EB6 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjpeg.a; path = Libraries/libjpeg.a; sourceTree = "<group>"; };
 		5FAD66681D72FD3C006973C9 /* Collection+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
 		5FB592FE1D7B4DE300FB0086 /* CarpaccioTests-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "CarpaccioTests-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FB593021D7B4DE300FB0086 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "CarpaccioTests-iOS/Info.plist"; sourceTree = SOURCE_ROOT; };
@@ -218,7 +217,6 @@
 		5FF2F7AD1CE1568E00C15E3A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5F7016221CE3295900173EB6 /* libjpeg.a */,
 				5F020A201D7B4BFA004C1DE6 /* UIKit.framework */,
 				5F1E229B1CDEAABF0083FD6F /* Cocoa.framework */,
 			);
@@ -483,6 +481,7 @@
 				INFOPLIST_FILE = "Carpaccio-iOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.piipari.Carpaccio;
 				PRODUCT_MODULE_NAME = Carpaccio;
 				PRODUCT_NAME = Carpaccio;
@@ -509,6 +508,7 @@
 				INFOPLIST_FILE = "Carpaccio-iOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.piipari.Carpaccio;
 				PRODUCT_MODULE_NAME = Carpaccio;
 				PRODUCT_NAME = Carpaccio;
@@ -561,7 +561,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = $SRCROOT/Include;
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries";
+				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -586,6 +586,7 @@
 				INFOPLIST_FILE = Carpaccio/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.piipari.Carpaccio;
 				PRODUCT_MODULE_NAME = Carpaccio;
 				PRODUCT_NAME = Carpaccio;
@@ -611,6 +612,7 @@
 				INFOPLIST_FILE = "Carpaccio-iOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.piipari.Carpaccio;
 				PRODUCT_MODULE_NAME = Carpaccio;
 				PRODUCT_NAME = Carpaccio;
@@ -694,7 +696,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = $SRCROOT/Include;
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries";
+				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -740,7 +742,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = $SRCROOT/Include;
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Libraries";
+				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
@@ -763,6 +765,7 @@
 				INFOPLIST_FILE = Carpaccio/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.piipari.Carpaccio;
 				PRODUCT_MODULE_NAME = Carpaccio;
 				PRODUCT_NAME = Carpaccio;
@@ -787,6 +790,7 @@
 				INFOPLIST_FILE = Carpaccio/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.piipari.Carpaccio;
 				PRODUCT_MODULE_NAME = Carpaccio;
 				PRODUCT_NAME = Carpaccio;

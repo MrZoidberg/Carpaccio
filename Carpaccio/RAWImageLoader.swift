@@ -64,9 +64,21 @@ public class RAWImageLoader: ImageLoaderProtocol
         func getDouble(_ from: NSDictionary, _ key: CFString) -> Double? {
             return (from[key as String] as? NSNumber)?.doubleValue
         }
-        
-        func getEnum<T>(_ from: NSDictionary, _ key: CFString, _ matches: [String: T]) -> T? {
-            guard let val = from[key as String] as? String else {
+		
+		func getInt(_ from: NSDictionary, _ key: CFString) -> Int? {
+			return (from[key as String] as? NSNumber)?.intValue
+		}
+		
+		func getBool(_ from: NSDictionary, _ key: CFString) -> Bool? {
+			guard let val = (from[key as String] as? NSNumber)?.doubleValue else {
+				return nil
+			}
+			
+			return val == 1 ? true : false
+		}
+		
+        func getEnum<T, KEYT>(_ from: NSDictionary, _ key: CFString, _ matches: [KEYT: T]) -> T? {
+            guard let val = from[key as String] as? KEYT else {
                 return nil
             }
             
@@ -76,8 +88,16 @@ public class RAWImageLoader: ImageLoaderProtocol
                return nil
             }
             
-            return enumValue;
+            return enumValue
         }
+		
+		func getArray<T>(_ from: NSDictionary, _ key: CFString) -> [T]? {
+			guard let ar = from[key as String] as? [T] else {
+				return nil
+			}
+			
+			return ar
+		}
 
         guard let imageSource = self.imageSource else {
             return nil
@@ -101,6 +121,9 @@ public class RAWImageLoader: ImageLoaderProtocol
             var imageId: String? = nil
             var bodySerialNumber: String? = nil, lensSpecs: String? = nil, lensMake: String? = nil, lensModel: String? = nil,lensSerialNumber: String? = nil
             var originalTimestamp: Date? = nil, digitizedTimestamp: Date? = nil
+			var subjectDistance: Double? = nil
+			var subjectArea: [Double]? = nil
+			var flashMode: FlashMode? = nil
             
             imageId = getString(EXIF, kCGImagePropertyExifImageUniqueID)
             
@@ -147,6 +170,13 @@ public class RAWImageLoader: ImageLoaderProtocol
             if digitizedTimestamp == nil, let dateTimeString = getString(EXIF, kCGImagePropertyExifDateTimeDigitized) {
                 digitizedTimestamp = EXIFDateFormatter.date(from: dateTimeString)
             }
+			
+			subjectDistance = getDouble(EXIF, kCGImagePropertyExifSubjectDistance)
+			subjectArea = getArray(EXIF, kCGImagePropertyExifSubjectArea)
+			var flashModeInt = getInt(EXIF, kCGImagePropertyExifFlash)
+			if (flashModeInt != nil) {
+				flashMode = FlashMode(rawValue: flashModeInt!)
+			}
             
             /*
              If image dimension didn't appear in metadata (can happen with some RAW files like Nikon NEFs), take one more step:
@@ -160,7 +190,7 @@ public class RAWImageLoader: ImageLoaderProtocol
                 height = CGFloat((image?.height)!)
             }
             
-            exifMetadata = ExifMetadata(imageId: imageId, bodySerialNumber: bodySerialNumber, lensSpecification: lensSpecs, lensMake: lensMake, lensModel: lensModel, lensSerialNumber: lensSerialNumber, nativeSize: CGSize(width: width!, height: height!), colorSpace: colorSpace, fNumber: fNumber, focalLength: focalLength, focalLength35mmEquivalent: focalLength35mm, iso: ISO, shutterSpeed: shutterSpeed, originalTimestamp: originalTimestamp, digitizedTimestamp: digitizedTimestamp)
+			exifMetadata = ExifMetadata(imageId: imageId, bodySerialNumber: bodySerialNumber, lensSpecification: lensSpecs, lensMake: lensMake, lensModel: lensModel, lensSerialNumber: lensSerialNumber, colorSpace: colorSpace, fNumber: fNumber, focalLength: focalLength, focalLength35mmEquivalent: focalLength35mm, iso: ISO, shutterSpeed: shutterSpeed, nativeSize: CGSize(width: width!, height: height!), originalTimestamp: originalTimestamp, digitizedTimestamp: digitizedTimestamp, subjectDistance: subjectDistance, subjectArea: subjectArea, flashMode: flashMode)
         }
         
         // Examine TIFF metadata
@@ -187,15 +217,18 @@ public class RAWImageLoader: ImageLoaderProtocol
         {
             var gpsVersion: String? = getString(GPS, kCGImagePropertyGPSVersion)
             var latitudeRef: LatitudeRef? = getEnum(GPS,  kCGImagePropertyGPSLatitudeRef, ["N": LatitudeRef.north, "S": LatitudeRef.south])
-            var latitude: String? = nil
-            var longtitudeRef: LongtitudeRef? = nil
-            var longtitude: String? = nil
-            var altitudeRef: String? = nil
-            var altitude: String? = nil
+            var latitude: Double? = getDouble(GPS, kCGImagePropertyGPSLatitude)
+            var longtitudeRef: LongtitudeRef? = getEnum(GPS,  kCGImagePropertyGPSLongitudeRef, ["E": LongtitudeRef.east, "W": LongtitudeRef.west])
+            var longtitude: Double? = getDouble(GPS, kCGImagePropertyGPSLongitude)
+            var altitudeRef: AltitudeRef? = getEnum(GPS,  kCGImagePropertyGPSAltitudeRef, [0: AltitudeRef.aboveSeaLevel, 1: AltitudeRef.belowSeaLevel])
+            var altitude: Double? = getDouble(GPS,  kCGImagePropertyGPSAltitude)
             var gpsTimestamp: Date? = nil
-            var imgDirection: String? = nil
-            
-            
+			if gpsTimestamp == nil, let dateTimeString = getString(GPS, kCGImagePropertyGPSTimeStamp) {
+				gpsTimestamp = EXIFDateFormatter.date(from: dateTimeString)
+			}
+            var imgDirection: String? = getString(GPS,  kCGImagePropertyGPSImgDirection)
+			
+			gpsMetadata = GpsMetadata(gpsVersion: gpsVersion, latitudeRef: latitudeRef, latitude: latitude, longtitudeRef: longtitudeRef, longtitude: longtitude, altitudeRef: altitudeRef, altitude: altitude, timestamp: gpsTimestamp, imgDirection: imgDirection)
         }
         
         let metadata = ImageMetadata(exif: exifMetadata!, tiff: tiffMetadata!)
