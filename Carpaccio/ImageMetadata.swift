@@ -49,7 +49,11 @@ public struct ExifMetadata
         self.originalTimestamp = originalTimestamp
         self.digitizedTimestamp = digitizedTimestamp
     }
-    
+}
+
+// Human readable extensios
+public extension ExifMetadata
+{
     public var humanReadableFNumber: String? {
         get
         {
