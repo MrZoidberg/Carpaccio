@@ -224,9 +224,9 @@ public struct ImageMetadata
     */
     
     public let exif: ExifMetadata
-    public let tiff: TIFFMetadata
+    public let tiff: TIFFMetadata?
     
-    public init(exif: ExifMetadata, tiff: TIFFMetadata)
+    public init(exif: ExifMetadata, tiff: TIFFMetadata?)
     {
         self.exif = exif;
         self.tiff = tiff
@@ -234,16 +234,18 @@ public struct ImageMetadata
     
     public var size: CGSize
     {
-        let shouldSwapWidthAndHeight: Bool
-        
-        switch self.tiff.nativeOrientation
-        {
-        case .left, .right, .leftMirrored, .rightMirrored:
-            shouldSwapWidthAndHeight = true
-        default:
-            shouldSwapWidthAndHeight = false
-        }
-        
+        var shouldSwapWidthAndHeight: Bool = false
+		
+		if let orientation = self.tiff?.nativeOrientation {
+			switch orientation
+			{
+			case .left, .right, .leftMirrored, .rightMirrored:
+				shouldSwapWidthAndHeight = true
+			default:
+				shouldSwapWidthAndHeight = false
+			}
+		}
+		
         if shouldSwapWidthAndHeight {
             return CGSize(width: self.exif.nativeSize.height, height: self.exif.nativeSize.width)
         }

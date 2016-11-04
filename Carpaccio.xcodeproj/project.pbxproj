@@ -11,6 +11,7 @@
 		289813381D4C8C2A00B1BA5D /* CGSize+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289813371D4C8C2A00B1BA5D /* CGSize+Extensions.swift */; };
 		2898133A1D4DC26600B1BA5D /* RAWImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289813391D4DC26600B1BA5D /* RAWImageLoader.swift */; };
 		28B9AA081D462AFD00C4B03E /* ImageMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B9AA071D462AFD00C4B03E /* ImageMetadata.swift */; };
+		3DF2FD241DCCCDCA00D35480 /* ImageMetadataLoaderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DF2FD231DCCCDCA00D35480 /* ImageMetadataLoaderProtocol.swift */; };
 		3DFA1C341D92F6EC00E03503 /* iphone5.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3DFA1C311D92F6D600E03503 /* iphone5.jpg */; };
 		3DFA1C351D92F6EC00E03503 /* iphone5.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3DFA1C311D92F6D600E03503 /* iphone5.jpg */; };
 		5F020A051D7B334A004C1DE6 /* ImageLoaderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289813331D494B1300B1BA5D /* ImageLoaderProtocol.swift */; };
@@ -65,6 +66,7 @@
 		289813371D4C8C2A00B1BA5D /* CGSize+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGSize+Extensions.swift"; sourceTree = "<group>"; };
 		289813391D4DC26600B1BA5D /* RAWImageLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RAWImageLoader.swift; sourceTree = "<group>"; };
 		28B9AA071D462AFD00C4B03E /* ImageMetadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageMetadata.swift; sourceTree = "<group>"; };
+		3DF2FD231DCCCDCA00D35480 /* ImageMetadataLoaderProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageMetadataLoaderProtocol.swift; sourceTree = "<group>"; };
 		3DFA1C311D92F6D600E03503 /* iphone5.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = iphone5.jpg; sourceTree = "<group>"; };
 		5F020A151D7B334A004C1DE6 /* Carpaccio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Carpaccio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F020A161D7B334A004C1DE6 /* Carpaccio-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Carpaccio-iOS-Info.plist"; path = "/Users/mz2/Projects/Sashimi/Carthage/Checkouts/Carpaccio/Carpaccio-iOS-Info.plist"; sourceTree = "<absolute>"; };
@@ -171,6 +173,7 @@
 				5F1E22801CDEA9D90083FD6F /* Carpaccio.h */,
 				5F1E22821CDEA9D90083FD6F /* Info.plist */,
 				5FAD66681D72FD3C006973C9 /* Collection+Extensions.swift */,
+				3DF2FD231DCCCDCA00D35480 /* ImageMetadataLoaderProtocol.swift */,
 			);
 			path = Carpaccio;
 			sourceTree = "<group>";
@@ -427,6 +430,7 @@
 				289813381D4C8C2A00B1BA5D /* CGSize+Extensions.swift in Sources */,
 				5F020A1E1D7B460C004C1DE6 /* BitmapImage.swift in Sources */,
 				2898133A1D4DC26600B1BA5D /* RAWImageLoader.swift in Sources */,
+				3DF2FD241DCCCDCA00D35480 /* ImageMetadataLoaderProtocol.swift in Sources */,
 				28B9AA081D462AFD00C4B03E /* ImageMetadata.swift in Sources */,
 				5FF2F7A91CE1563400C15E3A /* Image.swift in Sources */,
 				5FAD66691D72FD3C006973C9 /* Collection+Extensions.swift in Sources */,
