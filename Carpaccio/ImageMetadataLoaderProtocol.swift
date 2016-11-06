@@ -67,10 +67,6 @@ public class RAWImageMetadataLoader: ImageMetadataLoader {
 			return ar
 		}
 		
-		guard let imageSource = self.imageSource else {
-			return nil
-		}
-		
 		guard let imageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) else {
 			return nil
 		}
