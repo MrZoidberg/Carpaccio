@@ -28,21 +28,52 @@ class CarpaccioTests: XCTestCase {
         
         try! FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true, attributes: [:])
         
+        var imageMetadata: ImageMetadata?
+        do {
+            let converter = RAWImageMetadataLoader()
+        
+            imageMetadata = try converter.loadImageMetadata(imageUrl: img1URL)
+        } catch ImageMetadataLoadError.imageUrlIsInvalid(let msg) {
+            XCTFail(msg)
+        } catch ImageMetadataLoadError.cannotFindImageProperties(let msg) {
+            XCTFail(msg)
+        } catch {
+            XCTFail("Unknown error")
+        }
+        
+        XCTAssertEqual(imageMetadata?.tiff?.cameraMaker, "SONY")
+        XCTAssertEqual(imageMetadata?.tiff?.cameraModel, "ILCE-7RM2")
+        XCTAssertEqual(imageMetadata?.exif.iso, 125.0)
+        XCTAssertEqual(imageMetadata?.exif.nativeSize.width, 7952.0)
+        XCTAssertEqual(imageMetadata?.exif.nativeSize.height, 5304.0)
+        
+        let testedComponents:Set<Calendar.Component> = [.year, .month, .day, .hour, .minute, .second]
+        let date = imageMetadata?.tiff?.timestamp!
+        let components = Calendar(identifier: .gregorian).dateComponents(testedComponents, from: date!)
+        
+        XCTAssertEqual(components.year, 2016)
+        XCTAssertEqual(components.day, 16)
+        XCTAssertEqual(components.month, 3)
+        XCTAssertEqual(components.hour, 16)
+        XCTAssertEqual(components.minute, 34)
+        XCTAssertEqual(components.second, 21)
+        
+        /*
         let converter = RAWImageLoader(imageURL: img1URL, thumbnailScheme: .fullImageWhenThumbnailMissing)
         
         converter.loadThumbnailImage(handler: { thumb, imageMetadata in
             XCTAssertEqual(thumb.size.width, 1616)
             XCTAssertEqual(thumb.size.height, 1080)
             
-            XCTAssertEqual(imageMetadata.tiff.cameraMaker, "SONY")
-            XCTAssertEqual(imageMetadata.tiff.cameraModel, "ILCE-7RM2")
+            XCTAssertEqual(imageMetadata.tiff?.cameraMaker, "SONY")
+            XCTAssertEqual(imageMetadata.tiff?.cameraModel, "ILCE-7RM2")
             XCTAssertEqual(imageMetadata.exif.iso, 125.0)
             XCTAssertEqual(imageMetadata.exif.nativeSize.width, 7952.0)
             XCTAssertEqual(imageMetadata.exif.nativeSize.height, 5304.0)
             
             let testedComponents:Set<Calendar.Component> = [.year, .month, .day, .hour, .minute, .second]
-            let date = imageMetadata.tiff.timestamp!
-            let components = Calendar(identifier: .gregorian).dateComponents(testedComponents, from: date)
+            let date = imageMetadata.tiff?.timestamp!
+            let components = Calendar(identifier: .gregorian).dateComponents(testedComponents, from: date!)
             
             XCTAssertEqual(components.year, 2016)
             XCTAssertEqual(components.day, 16)
@@ -53,6 +84,8 @@ class CarpaccioTests: XCTestCase {
         }) { err in
             XCTFail("Error: \(err)")
         }
+        */
+        
         
         try! FileManager.default.removeItem(at: tempDir)
     }
@@ -71,8 +104,8 @@ class CarpaccioTests: XCTestCase {
 			XCTAssertEqual(image.size.width, 2448.0)
 			XCTAssertEqual(image.size.height, 3264.0)
 			
-			XCTAssertEqual(imageMetadata.tiff.cameraMaker, "Apple")
-			XCTAssertEqual(imageMetadata.tiff.cameraModel, "iPhone 5")
+			XCTAssertEqual(imageMetadata.tiff!.cameraMaker, "Apple")
+			XCTAssertEqual(imageMetadata.tiff!.cameraModel, "iPhone 5")
 			XCTAssertEqual(imageMetadata.exif.iso, 50.0)
 			XCTAssertEqual(imageMetadata.exif.nativeSize.width, 3264.0)
 			XCTAssertEqual(imageMetadata.exif.nativeSize.height, 2448.0)
@@ -82,7 +115,7 @@ class CarpaccioTests: XCTestCase {
 			XCTAssertEqualWithAccuracy(imageMetadata.exif.shutterSpeed!, 0.00145772, accuracy: 0.00000001)
 			
 			let testedComponents:Set<Calendar.Component> = [.year, .month, .day, .hour, .minute, .second]
-			let date = imageMetadata.tiff.timestamp!
+			let date = imageMetadata.tiff!.timestamp!
 			let components = Calendar(identifier: .gregorian).dateComponents(testedComponents, from: date)
 
 			XCTAssertEqual(components.year, 2016)

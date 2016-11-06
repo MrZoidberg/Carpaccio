@@ -225,11 +225,13 @@ public struct ImageMetadata
     
     public let exif: ExifMetadata
     public let tiff: TIFFMetadata?
+    public let gps: GpsMetadata?
     
-    public init(exif: ExifMetadata, tiff: TIFFMetadata?)
+    public init(exif: ExifMetadata, tiff: TIFFMetadata? = nil, gps: GpsMetadata? = nil)
     {
-        self.exif = exif;
+        self.exif = exif
         self.tiff = tiff
+        self.gps = gps
     }
     
     public var size: CGSize

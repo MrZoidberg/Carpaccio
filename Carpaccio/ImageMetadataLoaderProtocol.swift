@@ -7,10 +7,14 @@
 //
 
 import Foundation
+import CoreGraphics
+import CoreImage
+import ImageIO
 
 
 enum ImageMetadataLoadError: Error {
-	
+    case cannotFindImageProperties(msg: String)
+    case imageUrlIsInvalid(msg: String)
 }
 
 public protocol ImageMetadataLoader {
@@ -19,10 +23,32 @@ public protocol ImageMetadataLoader {
 }
 
 public class RAWImageMetadataLoader: ImageMetadataLoader {
+    
+    init() {
+        
+    }
 	
-	func loadImageMetadata(imageSource: CGImageSource) throws -> ImageMetadata {
-		return getImageMetadata(imageSource)
+	public func loadImageMetadata(imageSource: CGImageSource) throws -> ImageMetadata {
+		return try getImageMetadata(imageSource)
 	}
+    
+    public func loadImageMetadata(imageUrl: URL) throws -> ImageMetadata {
+        let options = [String(kCGImageSourceShouldCache): false, String(kCGImageSourceShouldAllowFloat): true] as NSDictionary as CFDictionary
+        guard let imageSource = CGImageSourceCreateWithURL(imageUrl as CFURL, options) else {
+            throw ImageMetadataLoadError.imageUrlIsInvalid(msg: "Url \(imageUrl.absoluteString) is invalid or doesn't contain an CGImage")
+        }
+        
+        return try getImageMetadata(imageSource)
+    }
+    
+    // See ImageMetadata.timestamp for known caveats about EXIF/TIFF
+    // date metadata, as interpreted by this date formatter.
+    private static let EXIFDateFormatter: DateFormatter =
+        {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
+            return formatter
+    }()
 	
 	private func getImageMetadata(_ imageSource: CGImageSource) throws -> ImageMetadata {
 		func getString(_ from: NSDictionary, _ key: CFString) -> String? {
@@ -68,7 +94,7 @@ public class RAWImageMetadataLoader: ImageMetadataLoader {
 		}
 		
 		guard let imageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) else {
-			return nil
+			throw ImageMetadataLoadError.cannotFindImageProperties(msg: "Cannot find image properties")
 		}
 		
 		let properties = NSDictionary(dictionary: imageProperties)
@@ -81,7 +107,6 @@ public class RAWImageMetadataLoader: ImageMetadataLoader {
 			var fNumber: Double? = nil, focalLength: Double? = nil, focalLength35mm: Double? = nil, ISO: Double? = nil, shutterSpeed: Double? = nil
 			var colorSpace: CGColorSpace? = nil
 			var width: CGFloat? = nil, height: CGFloat? = nil
-			var timestamp: Date? = nil
 			var imageId: String? = nil
 			var bodySerialNumber: String? = nil, lensSpecs: String? = nil, lensMake: String? = nil, lensModel: String? = nil,lensSerialNumber: String? = nil
 			var originalTimestamp: Date? = nil, digitizedTimestamp: Date? = nil
@@ -117,9 +142,6 @@ public class RAWImageMetadataLoader: ImageMetadataLoader {
 				height = CGFloat(h)
 			}
 			
-			if let originalDateString = getString(EXIF, kCGImagePropertyExifDateTimeOriginal) {
-				timestamp = EXIFDateFormatter.date(from: originalDateString)
-			}
 			
 			bodySerialNumber = getString(EXIF, kCGImagePropertyExifBodySerialNumber)
 			lensSpecs = getString(EXIF, kCGImagePropertyExifLensSpecification)
@@ -128,16 +150,16 @@ public class RAWImageMetadataLoader: ImageMetadataLoader {
 			lensSerialNumber = getString(EXIF, kCGImagePropertyExifLensSerialNumber)
 			
 			if originalTimestamp == nil, let dateTimeString = getString(EXIF, kCGImagePropertyExifDateTimeOriginal) {
-				originalTimestamp = EXIFDateFormatter.date(from: dateTimeString)
+				originalTimestamp = RAWImageMetadataLoader.EXIFDateFormatter.date(from: dateTimeString)
 			}
 			
 			if digitizedTimestamp == nil, let dateTimeString = getString(EXIF, kCGImagePropertyExifDateTimeDigitized) {
-				digitizedTimestamp = EXIFDateFormatter.date(from: dateTimeString)
+				digitizedTimestamp = RAWImageMetadataLoader.EXIFDateFormatter.date(from: dateTimeString)
 			}
 			
 			subjectDistance = getDouble(EXIF, kCGImagePropertyExifSubjectDistance)
 			subjectArea = getArray(EXIF, kCGImagePropertyExifSubjectArea)
-			var flashModeInt = getInt(EXIF, kCGImagePropertyExifFlash)
+			let flashModeInt = getInt(EXIF, kCGImagePropertyExifFlash)
 			if (flashModeInt != nil) {
 				flashMode = FlashMode(rawValue: flashModeInt!)
 			}
@@ -169,7 +191,7 @@ public class RAWImageMetadataLoader: ImageMetadataLoader {
 			orientation = CGImagePropertyOrientation(rawValue: (TIFF[kCGImagePropertyTIFFOrientation as String] as? NSNumber)?.uint32Value ?? CGImagePropertyOrientation.up.rawValue)
 			
 			if timestamp == nil, let dateTimeString = getString(TIFF, kCGImagePropertyTIFFDateTime) {
-				timestamp = EXIFDateFormatter.date(from: dateTimeString)
+				timestamp = RAWImageMetadataLoader.EXIFDateFormatter.date(from: dateTimeString)
 			}
 			
 			tiffMetadata = TIFFMetadata(cameraMaker: cameraMaker, cameraModel: cameraModel, nativeOrientation: (orientation)!, timestamp: timestamp)
@@ -179,23 +201,23 @@ public class RAWImageMetadataLoader: ImageMetadataLoader {
 		var gpsMetadata: GpsMetadata? = nil
 		if let GPS = properties[kCGImagePropertyGPSDictionary as String] as? NSDictionary
 		{
-			var gpsVersion: String? = getString(GPS, kCGImagePropertyGPSVersion)
-			var latitudeRef: LatitudeRef? = getEnum(GPS,  kCGImagePropertyGPSLatitudeRef, ["N": LatitudeRef.north, "S": LatitudeRef.south])
-			var latitude: Double? = getDouble(GPS, kCGImagePropertyGPSLatitude)
-			var longtitudeRef: LongtitudeRef? = getEnum(GPS,  kCGImagePropertyGPSLongitudeRef, ["E": LongtitudeRef.east, "W": LongtitudeRef.west])
-			var longtitude: Double? = getDouble(GPS, kCGImagePropertyGPSLongitude)
-			var altitudeRef: AltitudeRef? = getEnum(GPS,  kCGImagePropertyGPSAltitudeRef, [0: AltitudeRef.aboveSeaLevel, 1: AltitudeRef.belowSeaLevel])
-			var altitude: Double? = getDouble(GPS,  kCGImagePropertyGPSAltitude)
+			let gpsVersion: String? = getString(GPS, kCGImagePropertyGPSVersion)
+			let latitudeRef: LatitudeRef? = getEnum(GPS,  kCGImagePropertyGPSLatitudeRef, ["N": LatitudeRef.north, "S": LatitudeRef.south])
+			let latitude: Double? = getDouble(GPS, kCGImagePropertyGPSLatitude)
+			let longtitudeRef: LongtitudeRef? = getEnum(GPS,  kCGImagePropertyGPSLongitudeRef, ["E": LongtitudeRef.east, "W": LongtitudeRef.west])
+			let longtitude: Double? = getDouble(GPS, kCGImagePropertyGPSLongitude)
+			let altitudeRef: AltitudeRef? = getEnum(GPS,  kCGImagePropertyGPSAltitudeRef, [0: AltitudeRef.aboveSeaLevel, 1: AltitudeRef.belowSeaLevel])
+			let altitude: Double? = getDouble(GPS,  kCGImagePropertyGPSAltitude)
 			var gpsTimestamp: Date? = nil
 			if gpsTimestamp == nil, let dateTimeString = getString(GPS, kCGImagePropertyGPSTimeStamp) {
-				gpsTimestamp = EXIFDateFormatter.date(from: dateTimeString)
+				gpsTimestamp = RAWImageMetadataLoader.EXIFDateFormatter.date(from: dateTimeString)
 			}
-			var imgDirection: String? = getString(GPS,  kCGImagePropertyGPSImgDirection)
+			let imgDirection: String? = getString(GPS,  kCGImagePropertyGPSImgDirection)
 			
 			gpsMetadata = GpsMetadata(gpsVersion: gpsVersion, latitudeRef: latitudeRef, latitude: latitude, longtitudeRef: longtitudeRef, longtitude: longtitude, altitudeRef: altitudeRef, altitude: altitude, timestamp: gpsTimestamp, imgDirection: imgDirection)
 		}
 		
-		let metadata = ImageMetadata(exif: exifMetadata!, tiff: tiffMetadata)
+        let metadata = ImageMetadata(exif: exifMetadata!, tiff: tiffMetadata, gps: gpsMetadata)
 		return metadata
 	}
 }

@@ -42,6 +42,7 @@
 		5FB5930C1D7B4E4A00FB0086 /* DSC00593.ARW in Resources */ = {isa = PBXBuildFile; fileRef = 5F1E229F1CDEAC330083FD6F /* DSC00593.ARW */; };
 		5FF2F7A91CE1563400C15E3A /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF2F7A71CE1563400C15E3A /* Image.swift */; };
 		5FF2F7AA1CE1563400C15E3A /* Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF2F7A81CE1563400C15E3A /* Collection.swift */; };
+		74ABBD5C1DCF8950004A246A /* ImageMetadataLoaderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DF2FD231DCCCDCA00D35480 /* ImageMetadataLoaderProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -414,6 +415,7 @@
 				5F020A071D7B334A004C1DE6 /* CGSize+Extensions.swift in Sources */,
 				5F020A1F1D7B460C004C1DE6 /* BitmapImage.swift in Sources */,
 				5F020A081D7B334A004C1DE6 /* RAWImageLoader.swift in Sources */,
+				74ABBD5C1DCF8950004A246A /* ImageMetadataLoaderProtocol.swift in Sources */,
 				5F020A091D7B334A004C1DE6 /* ImageMetadata.swift in Sources */,
 				5F020A0A1D7B334A004C1DE6 /* Image.swift in Sources */,
 				5F020A1C1D7B3D1D004C1DE6 /* BitmapImage+iOS.swift in Sources */,
@@ -484,6 +486,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "Carpaccio-iOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.piipari.Carpaccio;
@@ -511,6 +514,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "Carpaccio-iOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.piipari.Carpaccio;
@@ -565,6 +569,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = $SRCROOT/Include;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -615,6 +620,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "Carpaccio-iOS-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.piipari.Carpaccio;
@@ -700,6 +706,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = $SRCROOT/Include;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -746,6 +753,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = $SRCROOT/Include;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
