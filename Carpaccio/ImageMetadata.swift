@@ -61,7 +61,8 @@ public struct ExifMetadata
     public let subjectArea: [Double]?
     public let flashMode: FlashMode?
     
-    public init(imageId: String? = nil, bodySerialNumber: String? = nil, lensSpecification: String? = nil, lensMake: String? = nil, lensModel: String? = nil, lensSerialNumber: String? = nil, nativeSize: CGSize, colorSpace: CGColorSpace? = nil, fNumber: Double? = nil, focalLength: Double? = nil, focalLength35mmEquivalent: Double? = nil, iso: Double? = nil, shutterSpeed: TimeInterval? = nil, originalTimestamp: Date? = nil, digitizedTimestamp: Date? = nil)
+    public init(imageId: String? = nil, bodySerialNumber: String? = nil, lensSpecification: String? = nil, lensMake: String? = nil, lensModel: String? = nil, lensSerialNumber: String? = nil, nativeSize: CGSize, colorSpace: CGColorSpace? = nil, fNumber: Double? = nil, focalLength: Double? = nil, focalLength35mmEquivalent: Double? = nil, iso: Double? = nil, shutterSpeed: TimeInterval? = nil, originalTimestamp: Date? = nil, digitizedTimestamp: Date? = nil, subjectDistance: Double? = nil,
+                subjectArea: [Double]? = nil, flashMode: FlashMode? = nil)
     {
         self.imageId = imageId
         self.fNumber = fNumber
@@ -78,6 +79,9 @@ public struct ExifMetadata
         self.shutterSpeed = shutterSpeed
         self.originalTimestamp = originalTimestamp
         self.digitizedTimestamp = digitizedTimestamp
+        self.subjectDistance = subjectDistance
+        self.subjectArea = subjectArea
+        self.flashMode = flashMode
     }
 }
 

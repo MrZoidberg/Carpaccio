@@ -190,7 +190,7 @@ public class RAWImageLoader: ImageLoaderProtocol
                 height = CGFloat((image?.height)!)
             }
             
-			exifMetadata = ExifMetadata(imageId: imageId, bodySerialNumber: bodySerialNumber, lensSpecification: lensSpecs, lensMake: lensMake, lensModel: lensModel, lensSerialNumber: lensSerialNumber, colorSpace: colorSpace, fNumber: fNumber, focalLength: focalLength, focalLength35mmEquivalent: focalLength35mm, iso: ISO, shutterSpeed: shutterSpeed, nativeSize: CGSize(width: width!, height: height!), originalTimestamp: originalTimestamp, digitizedTimestamp: digitizedTimestamp, subjectDistance: subjectDistance, subjectArea: subjectArea, flashMode: flashMode)
+			exifMetadata = ExifMetadata(imageId: imageId, bodySerialNumber: bodySerialNumber, lensSpecification: lensSpecs, lensMake: lensMake, lensModel: lensModel, lensSerialNumber: lensSerialNumber, nativeSize: CGSize(width: width!, height: height!), colorSpace: colorSpace, fNumber: fNumber, focalLength: focalLength, focalLength35mmEquivalent: focalLength35mm, iso: ISO, shutterSpeed: shutterSpeed, originalTimestamp: originalTimestamp, digitizedTimestamp: digitizedTimestamp, subjectDistance: subjectDistance, subjectArea: subjectArea, flashMode: flashMode)
         }
         
         // Examine TIFF metadata
