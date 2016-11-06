@@ -12,7 +12,7 @@ import CoreImage
 import ImageIO
 
 
-enum ImageMetadataLoadError: Error {
+public enum ImageMetadataLoadError: Error {
     case cannotFindImageProperties(msg: String)
     case imageUrlIsInvalid(msg: String)
 }
@@ -24,7 +24,7 @@ public protocol ImageMetadataLoader {
 
 public class RAWImageMetadataLoader: ImageMetadataLoader {
     
-    init() {
+    public init() {
         
     }
 	
